@@ -12,7 +12,8 @@
       "name": "nirholas",
       "email": "nichxbt@gmail.com",
       "url": "https://github.com/nirholas/x402-concierge"
-    }
+    },
+    "x-guidance": "Meta-agent that composes paid skills — dinner + gift + transit in one request, with per-step receipts, powered by the suite. Every paid route answers an unpaid request with HTTP 402 and a list of accepted payments (USDC on Base or Solana — pick either), then returns the purchased artifact in the body of the same request once you retry with an X-PAYMENT header. Payment and delivery happen in one round trip; nothing is promised for later. POST /plan ($0.02 + passthrough) returns composed itinerary with each sub-call's artifact + receipt inline"
   },
   "servers": [
     {
@@ -370,7 +371,19 @@
             },
             "description": "Base64-encoded x402 payment payload. Its `network` selects the rail (base-sepolia/base or solana/solana-devnet). Omit it to receive the 402 challenge."
           }
-        ]
+        ],
+        "x-payment-info": {
+          "price": {
+            "mode": "fixed",
+            "currency": "USD",
+            "amount": "0.020000"
+          },
+          "protocols": [
+            {
+              "x402": {}
+            }
+          ]
+        }
       }
     },
     "/config": {
