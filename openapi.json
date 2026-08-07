@@ -1,0 +1,469 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "x402-concierge",
+    "version": "0.1.0",
+    "description": "Meta-agent that composes paid skills — dinner + gift + transit in one request, with per-step receipts. Paid routes respond 402 with x402 PaymentRequirements until an X-PAYMENT header settles.",
+    "license": {
+      "name": "Apache-2.0",
+      "identifier": "Apache-2.0"
+    },
+    "contact": {
+      "name": "nirholas",
+      "email": "nichxbt@gmail.com",
+      "url": "https://github.com/nirholas/x402-concierge"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:4021",
+      "description": "local dev"
+    },
+    {
+      "url": "https://your-deployment.example.com",
+      "description": "self-hosted"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "PaymentRequirements": {
+        "type": "object",
+        "description": "x402 payment requirements returned with HTTP 402. `accepts` always carries BOTH rails — USDC on Base (EVM) and USDC on Solana — at the same price; the client picks one and names it in the `network` field of its X-PAYMENT payload.",
+        "properties": {
+          "x402Version": {
+            "type": "integer"
+          },
+          "error": {
+            "type": "string"
+          },
+          "accepts": {
+            "type": "array",
+            "description": "One entry per accepted payment rail.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "scheme": {
+                  "type": "string",
+                  "const": "exact"
+                },
+                "network": {
+                  "type": "string",
+                  "examples": [
+                    "base-sepolia",
+                    "solana"
+                  ]
+                },
+                "maxAmountRequired": {
+                  "type": "string",
+                  "description": "USDC atomic units (6 decimals)."
+                },
+                "resource": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "mimeType": {
+                  "type": "string"
+                },
+                "payTo": {
+                  "type": "string"
+                },
+                "maxTimeoutSeconds": {
+                  "type": "integer"
+                },
+                "asset": {
+                  "type": "string",
+                  "description": "USDC contract (EVM) or mint (Solana)."
+                },
+                "extra": {
+                  "type": "object",
+                  "description": "EVM: EIP-712 domain (name/version). Solana: {name, decimals, feePayer} — feePayer sponsors the SOL network fee so the buyer needs only USDC."
+                }
+              }
+            }
+          }
+        },
+        "examples": [
+          {
+            "x402Version": 1,
+            "error": "X-PAYMENT header is required",
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "base-sepolia",
+                "maxAmountRequired": "20000",
+                "resource": "https://your-deployment.example.com/plan",
+                "description": "x402-concierge: POST /plan",
+                "mimeType": "application/json",
+                "payTo": "0x40252CFDF8B20Ed757D61ff157719F33Ec332402",
+                "maxTimeoutSeconds": 60,
+                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                "extra": {
+                  "name": "USDC",
+                  "version": "2"
+                }
+              },
+              {
+                "scheme": "exact",
+                "network": "solana",
+                "maxAmountRequired": "20000",
+                "resource": "https://your-deployment.example.com/plan",
+                "description": "x402-concierge: POST /plan",
+                "mimeType": "application/json",
+                "payTo": "WwwuGbqHrwF5RG89KhUbmRWEvjnRH9k5kVM5p7T3WwW",
+                "maxTimeoutSeconds": 60,
+                "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                "extra": {
+                  "name": "USD Coin",
+                  "decimals": 6,
+                  "feePayer": "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4",
+                  "amount": "20000"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "PlanTask": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "dinner",
+              "hotel",
+              "gift",
+              "transit"
+            ]
+          }
+        },
+        "additionalProperties": true
+      },
+      "StepResult": {
+        "type": "object",
+        "properties": {
+          "task": {
+            "type": "string"
+          },
+          "upstream": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "live",
+              "fixture"
+            ]
+          },
+          "artifact": {},
+          "paymentReceipt": {},
+          "quotedRequirements": {},
+          "note": {
+            "type": "string"
+          }
+        }
+      },
+      "SignedPlan": {
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "object",
+            "properties": {
+              "planId": {
+                "type": "string"
+              },
+              "requested": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/PlanTask"
+                }
+              },
+              "steps": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/StepResult"
+                }
+              },
+              "summary": {
+                "type": "object",
+                "properties": {
+                  "tasks": {
+                    "type": "integer"
+                  },
+                  "live": {
+                    "type": "integer"
+                  },
+                  "fixture": {
+                    "type": "integer"
+                  },
+                  "upstreamSandbox": {
+                    "type": "string"
+                  },
+                  "walletConfigured": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "createdAt": {
+                "type": "string"
+              }
+            }
+          },
+          "signature": {
+            "type": "string"
+          },
+          "algorithm": {
+            "type": "string",
+            "const": "HMAC-SHA256"
+          },
+          "canonicalization": {
+            "type": "string",
+            "const": "sorted-json"
+          }
+        }
+      },
+      "PaymentReceipt": {
+        "type": "object",
+        "description": "Settlement receipt, base64-JSON in the X-PAYMENT-RESPONSE header of every paid 200.",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "rail": {
+            "type": "string",
+            "enum": [
+              "evm",
+              "solana"
+            ]
+          },
+          "network": {
+            "type": "string"
+          },
+          "transaction": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "payer": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "amount": {
+            "type": "string"
+          },
+          "asset": {
+            "type": "string",
+            "const": "USDC"
+          }
+        }
+      }
+    },
+    "responses": {
+      "PaymentRequired": {
+        "description": "Payment required (x402)",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PaymentRequirements"
+            }
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/plan": {
+      "post": {
+        "summary": "Compose a multi-task itinerary ($0.02 + upstream passthrough)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "tasks"
+                ],
+                "properties": {
+                  "tasks": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 8,
+                    "items": {
+                      "$ref": "#/components/schemas/PlanTask"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Signed composed itinerary with per-step artifacts and receipts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "plan": {
+                      "$ref": "#/components/schemas/SignedPlan"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-PAYMENT-RESPONSE": {
+                "description": "Base64 JSON settlement receipt.",
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentReceipt"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid body (includes retry hint)"
+          },
+          "402": {
+            "$ref": "#/components/responses/PaymentRequired"
+          },
+          "500": {
+            "description": "Composition failed"
+          },
+          "502": {
+            "description": "Facilitator unreachable or settlement error — nothing was charged.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-PAYMENT",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Base64-encoded x402 payment payload. Its `network` selects the rail (base-sepolia/base or solana/solana-devnet). Omit it to receive the 402 challenge."
+          }
+        ]
+      }
+    },
+    "/config": {
+      "get": {
+        "summary": "Upstream wiring and wallet mode (free)",
+        "responses": {
+          "200": {
+            "description": "Current configuration",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "upstreams": {
+                      "type": "object"
+                    },
+                    "walletConfigured": {
+                      "type": "boolean"
+                    },
+                    "mode": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/verify": {
+      "post": {
+        "summary": "Verify a signed plan (free)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "payload",
+                  "signature"
+                ],
+                "properties": {
+                  "payload": {
+                    "type": "object"
+                  },
+                  "signature": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Verification result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "valid": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/healthz": {
+      "get": {
+        "summary": "Health check (free)",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/.well-known/x402": {
+      "get": {
+        "summary": "x402 discovery manifest (free)",
+        "responses": {
+          "200": {
+            "description": "Manifest JSON"
+          }
+        }
+      }
+    }
+  }
+}

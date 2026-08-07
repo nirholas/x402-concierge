@@ -1,0 +1,150 @@
+{
+  "x402Version": 1,
+  "name": "x402-concierge",
+  "description": "Meta-agent that composes paid skills — dinner + gift + transit in one request, with per-step receipts, powered by the x402 suite",
+  "homepage": "https://nirholas.github.io/x402-concierge/",
+  "repository": "https://github.com/nirholas/x402-concierge",
+  "contact": "nichxbt@gmail.com",
+  "skill": "/skill.md",
+  "payment": {
+    "note": "Pay in USDC on Base or Solana — your client picks the rail. Every 402 challenge lists both.",
+    "rails": [
+      {
+        "scheme": "exact",
+        "network": "base-sepolia",
+        "asset": "USDC",
+        "assetAddress": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+        "payTo": "0x40252CFDF8B20Ed757D61ff157719F33Ec332402",
+        "facilitator": "https://x402.org/facilitator"
+      },
+      {
+        "scheme": "exact",
+        "network": "solana",
+        "asset": "USDC",
+        "assetAddress": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+        "payTo": "WwwuGbqHrwF5RG89KhUbmRWEvjnRH9k5kVM5p7T3WwW",
+        "facilitator": "https://facilitator.payai.network"
+      }
+    ]
+  },
+  "resources": [
+    {
+      "resource": "POST /plan",
+      "description": "Compose multiple agentic-commerce tasks (dinner, hotel, gift, transit) in one paid request. Each step's upstream artifact and payment receipt is returned inline in a signed composed itinerary.",
+      "price": "$0.02",
+      "networks": [
+        "base-sepolia",
+        "solana"
+      ],
+      "asset": "USDC",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "base-sepolia",
+          "asset": "USDC",
+          "assetAddress": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+          "payTo": "0x40252CFDF8B20Ed757D61ff157719F33Ec332402",
+          "facilitator": "https://x402.org/facilitator",
+          "maxAmountRequired": "20000"
+        },
+        {
+          "scheme": "exact",
+          "network": "solana",
+          "asset": "USDC",
+          "assetAddress": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+          "payTo": "WwwuGbqHrwF5RG89KhUbmRWEvjnRH9k5kVM5p7T3WwW",
+          "facilitator": "https://facilitator.payai.network",
+          "maxAmountRequired": "20000",
+          "extra": {
+            "name": "USD Coin",
+            "decimals": 6,
+            "feePayer": "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4"
+          }
+        }
+      ],
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "plan": {
+            "type": "object",
+            "properties": {
+              "payload": {
+                "type": "object",
+                "properties": {
+                  "planId": {
+                    "type": "string"
+                  },
+                  "requested": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "steps": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "task": {
+                          "type": "string"
+                        },
+                        "upstream": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "live",
+                            "fixture"
+                          ]
+                        },
+                        "artifact": {},
+                        "paymentReceipt": {},
+                        "quotedRequirements": {},
+                        "note": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "summary": {
+                    "type": "object",
+                    "properties": {
+                      "tasks": {
+                        "type": "integer"
+                      },
+                      "live": {
+                        "type": "integer"
+                      },
+                      "fixture": {
+                        "type": "integer"
+                      },
+                      "upstreamSandbox": {
+                        "type": "string"
+                      },
+                      "walletConfigured": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "createdAt": {
+                    "type": "string"
+                  }
+                }
+              },
+              "signature": {
+                "type": "string"
+              },
+              "algorithm": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
