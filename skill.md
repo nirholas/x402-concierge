@@ -4,7 +4,7 @@ A meta-agent service: send one paid request describing several real-world tasks 
 
 **Pay in USDC on Base or Solana — your client picks the rail.** Every 402 challenge lists both.
 
-**Base URL**: `{BASE_URL}` (self-hosted; default `http://localhost:4021`)
+**Base URL**: `{BASE_URL}` (self-hosted; default `http://localhost:4042`)
 
 ## Endpoints
 
@@ -81,7 +81,7 @@ Protocol: **x402** (HTTP 402). Asset: **USDC** on both rails. A 402 response car
 | EVM | `base-sepolia` (`base` via `NETWORK`) | `0x036CbD53842c5426634e7929541eC2318f3dCF7e` | `0x40252CFDF8B20Ed757D61ff157719F33Ec332402` | `https://x402.org/facilitator` |
 | Solana | `solana` (`solana-devnet` via `SOLANA_NETWORK`) | `EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v` | `WwwuGbqHrwF5RG89KhUbmRWEvjnRH9k5kVM5p7T3WwW` | `https://facilitator.payai.network` |
 
-Flow: request → `402` with `accepts[]` → pick your rail → sign the USDC authorization (EIP-3009 on Base, fee-sponsored SPL `transferChecked` on Solana; `extra.feePayer` sponsors the SOL fee so you need no SOL) → retry with `X-PAYMENT` → `200` with the artifact in-body plus an `X-PAYMENT-RESPONSE` header (`{success, rail, network, transaction, payer, amount, asset}`), echoed in the response body as `conciergeFee`.
+Flow: request → `402` with `accepts[]` → pick your rail → sign the USDC authorization (EIP-3009 on Base, fee-sponsored SPL `transferChecked` on Solana; `extra.feePayer` sponsors the SOL fee so you need no SOL) → retry with `X-PAYMENT` → `200` with the artifact in-body plus an `X-PAYMENT-RESPONSE` header (`{success, rail, network, facilitator, transaction, payer, amount, asset}`), echoed in the response body as `conciergeFee`.
 
 **Two payment layers.** You pay the concierge on your rail of choice. The concierge separately pays each upstream from its own wallet on the EVM rail (`CONCIERGE_PRIVATE_KEY`); those settlements come back to you as `steps[].paymentReceipt`, so one plan gives you a full, itemised payment trail across services.
 

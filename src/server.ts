@@ -10,7 +10,7 @@ import { usingDevSecret, verify } from "./sign.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR = path.resolve(__dirname, "..", "public");
 
-const PORT = Number(process.env.PORT ?? 4021);
+const PORT = Number(process.env.PORT ?? 4042);
 
 const PRICES: Record<string, string> = {
   "POST /plan": "$0.02",

@@ -14,7 +14,7 @@ import { wrapFetchWithPayment } from "x402-fetch";
 import { privateKeyToAccount } from "viem/accounts";
 import { z } from "zod";
 
-const BASE = process.env.CONCIERGE_URL ?? "http://localhost:4021";
+const BASE = process.env.CONCIERGE_URL ?? "http://localhost:4042";
 const payFetch = wrapFetchWithPayment(
   fetch,
   privateKeyToAccount(process.env.PRIVATE_KEY as `0x${string}`),
@@ -82,7 +82,7 @@ npm install @modelcontextprotocol/sdk x402-fetch viem zod tsx
       "command": "npx",
       "args": ["tsx", "/absolute/path/to/concierge-mcp.ts"],
       "env": {
-        "CONCIERGE_URL": "http://localhost:4021",
+        "CONCIERGE_URL": "http://localhost:4042",
         "PRIVATE_KEY": "0x…wallet with Base Sepolia USDC…"
       }
     }

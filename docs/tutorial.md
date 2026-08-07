@@ -63,13 +63,13 @@ The startup banner lists both payment rails and the upstream wiring:
 Confirm the wiring at any time:
 
 ```bash
-curl -s http://localhost:4021/config | jq
+curl -s http://localhost:4042/config | jq
 ```
 
 ## 4. Your first 402
 
 ```bash
-curl -si -X POST http://localhost:4021/plan \
+curl -si -X POST http://localhost:4042/plan \
   -H 'content-type: application/json' \
   -d '{"tasks":[{"type":"dinner","party":4},{"type":"gift","item":"flowers"}]}'
 ```
@@ -77,7 +77,7 @@ curl -si -X POST http://localhost:4021/plan \
 You get `HTTP/1.1 402 Payment Required` and a JSON body whose `accepts[]` array holds **two** x402 `PaymentRequirements` — one per rail, same price:
 
 ```bash
-curl -s -X POST http://localhost:4021/plan \
+curl -s -X POST http://localhost:4042/plan \
   -H 'content-type: application/json' -d '{"tasks":[{"type":"dinner","party":4}]}' \
   | jq '.accepts[] | {network, payTo, asset, maxAmountRequired}'
 ```
@@ -122,7 +122,7 @@ Three things to look at:
 The whole payload is signed:
 
 ```bash
-curl -s -X POST http://localhost:4021/verify \
+curl -s -X POST http://localhost:4042/verify \
   -H 'content-type: application/json' -d "$(jq -c '.plan' plan.json)"
 # {"valid":true}
 ```

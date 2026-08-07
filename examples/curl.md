@@ -11,7 +11,7 @@ Every paid route is **dual rail**: the 402 lists USDC on Base *and* USDC on Sola
 ## 0. See what this deployment will actually do (free)
 
 ```bash
-curl -s http://localhost:4021/config | jq
+curl -s http://localhost:4042/config | jq
 ```
 
 ```json
@@ -28,7 +28,7 @@ curl -s http://localhost:4021/config | jq
 ## 1. Hit the paid route without payment → 402
 
 ```bash
-curl -si -X POST http://localhost:4021/plan \
+curl -si -X POST http://localhost:4042/plan \
   -H 'content-type: application/json' \
   -d '{"tasks":[{"type":"dinner","party":4,"time":"2026-08-08T19:00:00Z"},{"type":"gift","item":"flowers"}]}'
 ```
@@ -47,7 +47,7 @@ Content-Type: application/json
       "scheme": "exact",
       "network": "base-sepolia",
       "maxAmountRequired": "20000",
-      "resource": "http://localhost:4021/plan",
+      "resource": "http://localhost:4042/plan",
       "payTo": "0x40252CFDF8B20Ed757D61ff157719F33Ec332402",
       "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
       "extra": { "name": "USDC", "version": "2" }
@@ -56,7 +56,7 @@ Content-Type: application/json
       "scheme": "exact",
       "network": "solana",
       "maxAmountRequired": "20000",
-      "resource": "http://localhost:4021/plan",
+      "resource": "http://localhost:4042/plan",
       "payTo": "WwwuGbqHrwF5RG89KhUbmRWEvjnRH9k5kVM5p7T3WwW",
       "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
       "extra": { "name": "USD Coin", "decimals": 6, "feePayer": "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4" }
@@ -68,7 +68,7 @@ Content-Type: application/json
 The `accepts` array is the machine-readable price sheet, one entry per rail: `maxAmountRequired` is in USDC base units (6 decimals), `asset` is the USDC contract/mint on the named network. Pick one:
 
 ```bash
-curl -s -X POST http://localhost:4021/plan \
+curl -s -X POST http://localhost:4042/plan \
   -H 'content-type: application/json' -d '{"tasks":[{"type":"dinner","party":4}]}' \
   | jq '.accepts[] | {network, payTo, asset, maxAmountRequired}'
 ```
@@ -95,7 +95,7 @@ The server reads `network` off your payload, picks the matching requirement, and
 
 ```
 HTTP/1.1 200 OK
-X-PAYMENT-RESPONSE: <base64 of {"success":true,"rail":"solana","network":"solana","transaction":"5xY…","payer":"7hF…","amount":"20000","asset":"USDC"}>
+X-PAYMENT-RESPONSE: <base64 of {"success":true,"rail":"solana","network":"solana","facilitator":"https://facilitator.payai.network","transaction":"5xY…","payer":"7hF…","amount":"20000","asset":"USDC"}>
 
 {
   "plan": {
@@ -124,9 +124,9 @@ echo "<header value>" | base64 -d | jq
 ## 4. Free routes need no payment
 
 ```bash
-curl -s http://localhost:4021/config | jq
-curl -s http://localhost:4021/healthz
-curl -s http://localhost:4021/.well-known/x402 | jq
-curl -s -X POST http://localhost:4021/verify \
+curl -s http://localhost:4042/config | jq
+curl -s http://localhost:4042/healthz
+curl -s http://localhost:4042/.well-known/x402 | jq
+curl -s -X POST http://localhost:4042/verify \
   -H 'content-type: application/json' -d '{"payload":{…},"signature":"…"}'
 ```

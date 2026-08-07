@@ -10,7 +10,7 @@
  *   POST /plan (paid, $0.02 + upstream passthrough) — dinner + gift + transit in one request.
  *
  * Usage:
- *   PRIVATE_KEY=0x... BASE_URL=http://localhost:4021 npm run client
+ *   PRIVATE_KEY=0x... BASE_URL=http://localhost:4042 npm run client
  *
  * PRIVATE_KEY must hold Base Sepolia USDC (faucet: https://faucet.circle.com).
  * Tip: run x402-agent-sandbox on port 4038 and set CONCIERGE_PRIVATE_KEY on the
@@ -22,7 +22,7 @@ import { wrapFetchWithPayment, decodeXPaymentResponse } from "x402-fetch";
 
 config();
 
-const BASE_URL = process.env.BASE_URL ?? "http://localhost:4021";
+const BASE_URL = process.env.BASE_URL ?? "http://localhost:4042";
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 
 if (!PRIVATE_KEY) {
@@ -106,7 +106,7 @@ main().catch((err) => {
  *
  * And the raw dual-rail 402 body, for reference:
  *
- *   curl -s -X POST http://localhost:4021/plan \
+ *   curl -s -X POST http://localhost:4042/plan \
  *     -H 'content-type: application/json' -d '{"tasks":[{"type":"dinner","party":4}]}' \
  *     | jq '.accepts[] | {network, payTo, maxAmountRequired}'
  *
