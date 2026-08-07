@@ -411,7 +411,8 @@
               }
             }
           }
-        }
+        },
+        "security": []
       }
     },
     "/verify": {
@@ -455,7 +456,8 @@
               }
             }
           }
-        }
+        },
+        "security": []
       }
     },
     "/healthz": {
@@ -465,7 +467,8 @@
           "200": {
             "description": "OK"
           }
-        }
+        },
+        "security": []
       }
     },
     "/.well-known/x402": {
@@ -475,7 +478,8 @@
           "200": {
             "description": "Manifest JSON"
           }
-        }
+        },
+        "security": []
       }
     }
   }
