@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: If you use this software, please cite it as below.
+title: "x402-concierge"
+abstract: "Meta-agent that composes paid skills: dinner + gift + transit in one request, with per-step receipts, powered by the suite"
+license: Apache-2.0
+repository-code: "https://github.com/nirholas/x402-concierge"
+url: "https://three.ws"
+authors:
+  - name: three.ws
+    website: "https://three.ws"

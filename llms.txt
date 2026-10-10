@@ -1,0 +1,28 @@
+# x402-concierge
+
+> Meta-agent that composes paid skills: dinner + gift + transit in one request, with per-step receipts, powered by the suite
+
+x402-concierge is an open-source repository by nirholas, part of the three.ws ecosystem.
+
+## Docs
+
+- [README](https://github.com/nirholas/x402-concierge/blob/HEAD/README.md): install, usage and reference
+- [Why x402 for this](https://github.com/nirholas/x402-concierge/blob/HEAD/README.md#why-x402-for-this)
+- [Quickstart](https://github.com/nirholas/x402-concierge/blob/HEAD/README.md#quickstart)
+- [API](https://github.com/nirholas/x402-concierge/blob/HEAD/README.md#api)
+- [How x402 works: two rails, one flow](https://github.com/nirholas/x402-concierge/blob/HEAD/README.md#how-x402-works-two-rails-one-flow)
+- [Real backend / API keys](https://github.com/nirholas/x402-concierge/blob/HEAD/README.md#real-backend-api-keys)
+- [For AI agents](https://github.com/nirholas/x402-concierge/blob/HEAD/README.md#for-ai-agents)
+- [Docs](https://github.com/nirholas/x402-concierge/blob/HEAD/README.md#docs)
+- [Support](https://github.com/nirholas/x402-concierge/blob/HEAD/README.md#support)
+- [AGENTS.md](https://github.com/nirholas/x402-concierge/blob/HEAD/AGENTS.md): guidance for coding agents
+- [Full text for LLMs](https://github.com/nirholas/x402-concierge/blob/HEAD/llms-full.txt): the README inlined
+
+## Project
+
+- [Source](https://github.com/nirholas/x402-concierge)
+- [Issues](https://github.com/nirholas/x402-concierge/issues)
+- [Discussions](https://github.com/nirholas/x402-concierge/discussions)
+- [Homepage](https://nirholas.github.io/x402-concierge/)
+- [three.ws](https://three.ws): the platform this is part of
+- [All repositories by nirholas](https://github.com/nirholas/nirholas#readme)
