@@ -1,0 +1,24 @@
+{
+  "name": "x402-concierge",
+  "owner": {
+    "name": "nirholas"
+  },
+  "description": "Compose dinner, gift, transit and hotel tasks into one signed itinerary with per-step x402 payment receipts.",
+  "plugins": [
+    {
+      "name": "x402-concierge",
+      "source": "./plugins/x402-concierge",
+      "description": "Compose dinner, gift, transit and hotel tasks into one signed itinerary with per-step x402 payment receipts.",
+      "category": "automation",
+      "tags": [
+        "x402",
+        "usdc",
+        "solana",
+        "base",
+        "agentic-commerce",
+        "http-402",
+        "orchestration"
+      ]
+    }
+  ]
+}
